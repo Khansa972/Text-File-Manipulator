@@ -1,0 +1,199 @@
+<div align="center">
+
+<h1>📝 Text File Manipulator</h1>
+
+<p>
+  <strong>A Java-based console application for text file manipulation using custom-built Data Structures.</strong><br/>
+  Built from scratch — no Java Collections Framework used.
+</p>
+
+<p>
+  <img src="https://img.shields.io/badge/Language-Java-orange?style=for-the-badge&logo=java" />
+  <img src="https://img.shields.io/badge/Type-DSA%20Project-blue?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Status-Completed-brightgreen?style=for-the-badge" />
+</p>
+
+</div>
+
+---
+
+## 📖 Overview
+
+**Text File Manipulator** is a Data Structures & Algorithms (DSA) project developed in Java. It provides a menu-driven console interface to perform a wide range of operations on `.txt` files — all powered by custom implementations of **Stack** and **Singly LinkedList**, written entirely from scratch without using Java's built-in Collections Framework.
+
+This project demonstrates how fundamental data structures can be applied to solve real-world file manipulation problems.
+
+---
+
+## ✨ Features
+
+| # | Operation | Description | Data Structure Used |
+|---|-----------|-------------|-------------------|
+| 1 | **Eliminate Repeated Lines** | Removes all duplicate lines from the file | LinkedList (`contains()`) |
+| 2 | **Reverse File Content** | Reverses the order of all lines in the file | Stack (LIFO) |
+| 3 | **Insert New Line** | Inserts a new line after a target keyword | Stack |
+| 4 | **Copy Line** | Copies a specific line to a clipboard | Stack (Clipboard) |
+| 5 | **Paste Line** | Pastes clipboard content at a specified position | Stack + LinkedList |
+| 6 | **Cut Line** | Removes a line and stores it in clipboard | Stack (Clipboard) + LinkedList |
+| 7 | **Sort File Content** | Sorts lines alphabetically using Bubble Sort | Array + Bubble Sort |
+| 8 | **Merge Files** | Appends content of one file into another | LinkedList |
+| 9 | **Exit** | Exits the program gracefully | — |
+
+---
+
+## 📁 Project Structure
+
+```
+Text-File-Manipulator/
+│
+├── src/
+│   ├── TextFileManipulator.java   # Main class — entry point & all operations
+│   ├── LinkedList.java            # Custom Singly LinkedList implementation
+│   └── Stack.java                 # Custom Stack (array-based) implementation
+│
+├── sample/
+│   └── sample.txt                 # Sample text file for testing
+│
+├── README.md                      # Project documentation
+├── .gitignore                     # Git ignore rules
+└── LICENSE                        # MIT License
+```
+
+---
+
+## 🧱 Data Structures Implemented
+
+### 🔷 Stack (Array-Based)
+A custom Last-In-First-Out (LIFO) data structure implemented using an array.
+
+**Methods:**
+- `push(String x)` — Add element to top
+- `pop()` — Remove and return top element
+- `peek()` — View top element without removing
+- `peekindex(int index)` — Access element at a specific position
+- `stacksize()` — Get current number of elements
+- `isEmpty()` — Check if stack is empty
+- `clearstack()` — Remove all elements
+- `display()` — Print all elements
+
+**Used for:** Clipboard (copy/cut/paste), file content reversal, line insertion
+
+---
+
+### 🔷 Singly LinkedList
+A custom dynamic linear data structure using Node-based links.
+
+**Methods:**
+- `addFirst(String data)` — Insert at head
+- `addLast(String data)` — Insert at tail
+- `delFirst()` — Delete head node
+- `deletefirstString()` — Delete and return head data
+- `contains(String data)` — Search for a value
+- `isEmpty()` — Check if list is empty
+- `Size()` — Return total node count
+- `display()` — Print all elements
+- `reverseAndWriteToFile(String path)` — Reverse file using Stack
+
+**Used for:** Storing file lines, duplicate removal, file merging, paste/cut operations
+
+---
+
+## 📚 Topics Covered
+
+**Data Structures:**
+- Singly Linked List (insertion, deletion, traversal, searching)
+- Stack using Array (push, pop, overflow & underflow handling)
+- Array (used in sorting)
+
+**Algorithms:**
+- Bubble Sort (on String array using `compareTo()`)
+- Linear Search (for duplicate detection)
+- LIFO-based reversal
+
+**Java Concepts:**
+- File I/O — `BufferedReader`, `BufferedWriter`, `FileReader`, `FileWriter`, `RandomAccessFile`
+- Object-Oriented Programming — Classes, Objects, Inner Classes (`Node`)
+- Recursion — Used in `checkname()` for file validation
+- Exception Handling — `try-catch`, `IOException`, `NoSuchElementException`
+- String manipulation — `contains()`, `compareTo()`, `equalsIgnoreCase()`
+
+---
+
+## ⚙️ How to Run
+
+### Prerequisites
+- Java JDK 8 or above
+- Terminal / Command Prompt
+
+### Steps
+
+```bash
+# Step 1: Clone the repository
+git clone https://github.com/YOUR_USERNAME/Text-File-Manipulator.git
+
+# Step 2: Navigate to the src folder
+cd Text-File-Manipulator/src
+
+# Step 3: Compile all Java files
+javac Stack.java LinkedList.java TextFileManipulator.java
+
+# Step 4: Run the program
+java TextFileManipulator
+```
+
+### Test with Sample File
+
+When the program asks for a file name, type:
+```
+sample
+```
+The program will automatically open `sample.txt` from your current directory.
+> ⚠️ Make sure `sample.txt` is in the same folder where you run `java TextFileManipulator`.
+
+---
+
+## 🖥️ Program Demo
+
+```
+---------------------------------------------------------------------------------
+               T E X T   F I L E   M A N I P U L A T O R
+---------------------------------------------------------------------------------
+Enter File Name in which you want changes :
+> sample
+
+Length of File : 120
+
+------------------------------------------------------------------
+ PRESS :
+(1). Eliminate repeated Lines from the file
+(2). Reverse the content of file
+(3). Insert new Line
+(4). Copy text
+(5). Paste text Line
+(6). Cut the Line
+(7). Sort the content of the file
+(8). Write one file content to another file
+(9). Exit
+```
+
+---
+
+
+## 👤 Author
+
+**Khansa Bint-e-Zia**
+- 🔗 GitHub: [@Khansa972](https://github.com/Khansa927)
+- 📧 Email: khansazia627@gmail.com
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+
+---
+
+<div align="center">
+  <sub>Built with ❤️ as a Data Structures & Algorithms project in Java</sub>
+</div>
