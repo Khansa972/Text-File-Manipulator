@@ -52,8 +52,7 @@ Text-File-Manipulator/
 │   ├── LinkedList.java            # Custom Singly LinkedList implementation
 │   └── Stack.java                 # Custom Stack (array-based) implementation
 │
-├── sample/
-│   └── sample.txt                 # Sample text file for testing
+├── sample.txt                     # Sample text file for testing
 │
 ├── README.md                      # Project documentation
 ├── .gitignore                     # Git ignore rules
@@ -130,7 +129,7 @@ A custom dynamic linear data structure using Node-based links.
 
 ```bash
 # Step 1: Clone the repository
-git clone https://github.com/YOUR_USERNAME/Text-File-Manipulator.git
+git clone https://github.com/Khansa972/Text-File-Manipulator.git
 
 # Step 2: Navigate to the src folder
 cd Text-File-Manipulator/src
@@ -149,6 +148,7 @@ When the program asks for a file name, type:
 sample
 ```
 The program will automatically open `sample.txt` from your current directory.
+
 > ⚠️ Make sure `sample.txt` is in the same folder where you run `java TextFileManipulator`.
 
 ---
@@ -179,11 +179,29 @@ Length of File : 120
 
 ---
 
+## 🔒 Limitations
+
+- File size is allocated statically based on initial file length (affects Stack/array size)
+- Designed for plain `.txt` files only
+- Console-based interface (no GUI)
+- Does not support Unicode or special characters in some operations
+
+---
+
+## 🚀 Possible Improvements
+
+- Replace static array-based Stack with a dynamic implementation
+- Add GUI using Java Swing or JavaFX
+- Support for multiple file formats (`.csv`, `.log`, etc.)
+- Undo/Redo functionality using Stack history
+- Unit testing with JUnit
+
+---
 
 ## 👤 Author
 
 **Khansa Bint-e-Zia**
-- 🔗 GitHub: [@Khansa972](https://github.com/Khansa927)
+- 🔗 GitHub: [@Khansa972](https://github.com/Khansa972)
 - 📧 Email: khansazia627@gmail.com
 
 ---
