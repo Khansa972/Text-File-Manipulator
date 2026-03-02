@@ -1,0 +1,9 @@
+Hello World
+This is a sample file
+Java is great
+Hello World
+Data Structures
+Java is great
+Text File Manipulator
+Learning is fun
+Data Structures
