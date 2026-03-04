@@ -230,7 +230,7 @@ public class TextFileManipulatorGUI extends Application {
         applySideBtnStyle(saveBtn, C_GREEN, false);
         saveBtn.setOnMouseEntered(e -> applySideBtnStyle(saveBtn, C_GREEN, true));
         saveBtn.setOnMouseExited(e  -> applySideBtnStyle(saveBtn, C_GREEN, false));
-        saveBtn.setOnAction(e -> saveFile());
+        saveBtn.setOnAction(e -> saveFile(stage));
 
         sidebar.getChildren().addAll(
             fileSection, openBtn, changeFileBtn, fileNameLabel,
@@ -447,17 +447,30 @@ public class TextFileManipulatorGUI extends Application {
         }
     }
 
-    // FIX 2: Save shows FULL PATH where file is saved
-    private void saveFile() {
-        if (currentFilePath == null) {
-            setStatus("\u26A0\uFE0F  No file open! Open a file first using 'Open File' button.", C_YELLOW);
-            return;
-        }
+    // FIX 2: Save shows FULL PATH — uses FileChooser if no file is open
+    private void saveFile(Stage stage) {
         try {
+            // If no file is open, open a FileChooser to let user pick save location
+            if (currentFilePath == null) {
+                FileChooser fc = new FileChooser();
+                fc.setTitle("Save File As");
+                fc.setInitialFileName("output.txt");
+                fc.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("Text Files (*.txt)", "*.txt")
+                );
+                File saveFile = fc.showSaveDialog(stage);
+                if (saveFile == null) return; // user cancelled
+                currentFilePath = saveFile.getAbsolutePath();
+                fileNameLabel.setText("\uD83D\uDCC4 " + saveFile.getName());
+                // Show Change File button
+                changeFileBtn.setVisible(true);
+                changeFileBtn.setManaged(true);
+            }
+            // Write content to file
             BufferedWriter bw = new BufferedWriter(new FileWriter(currentFilePath));
             bw.write(fileArea.getText());
             bw.close();
-            setStatus("\uD83D\uDCBE  Saved successfully!   Location \u2794  " + currentFilePath, C_GREEN);
+            setStatus("\uD83D\uDCBE  Saved!   Location \u2794  " + currentFilePath, C_GREEN);
         } catch (IOException e) {
             setStatus("\u274C  Error saving: " + e.getMessage(), C_RED);
         }
