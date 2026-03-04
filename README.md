@@ -222,16 +222,6 @@ Length of File : 120
 
 ---
 
-## 🚀 Possible Improvements
-
-- ✅ **GUI Version** already available → [`gui-version`](../../tree/gui-version) branch
-- ⚡ Replace static array-based Stack with a dynamic/auto-growing implementation
-- 📂 Support for multiple file formats (`.csv`, `.log`, etc.)
-- ↩️ Undo/Redo functionality using Stack history
-- 🧪 Unit testing with JUnit
-
----
-
 ## 👤 Author
 
 **Khansa Bint-e-Zia**
