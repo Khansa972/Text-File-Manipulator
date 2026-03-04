@@ -25,6 +25,11 @@ import java.util.Optional;
  *   Branch  : gui-version
  * ============================================================
  *
+ *  Fixes Applied:
+ *   FIX 1 — Open File button moved to TOP of LEFT sidebar (easy to find)
+ *   FIX 2 — After save, shows exact full path where file is saved
+ *   FIX 3 — "Change File" button appears after file is opened
+ *
  *  All 8 Operations:
  *   1. Eliminate Repeated Lines  (LinkedList)
  *   2. Reverse File Content      (Stack - LIFO)
@@ -34,14 +39,6 @@ import java.util.Optional;
  *   6. Cut Line                  (Stack Clipboard)
  *   7. Sort Content              (Array + Bubble Sort)
  *   8. Merge Files               (LinkedList)
- *
- *  GUI Features:
- *   - Dark / Light theme toggle
- *   - File open via FileChooser
- *   - Live file content in TextArea
- *   - Color-coded sidebar buttons
- *   - Status bar with real-time feedback
- *   - Save / Download file
  * ============================================================
  */
 public class TextFileManipulatorGUI extends Application {
@@ -79,7 +76,6 @@ public class TextFileManipulatorGUI extends Application {
     private boolean isDark          = true;
     private int     fileSize        = 2048;
 
-    // Custom Data Structures
     private DSLinkedList contentList = new DSLinkedList();
     private DSStack      clipBoard   = new DSStack(fileSize);
 
@@ -90,6 +86,7 @@ public class TextFileManipulatorGUI extends Application {
     private VBox       sidebar;
     private BorderPane root;
     private Scene      scene;
+    private Button     changeFileBtn;  // FIX 3
 
     // ─────────────────────────────────────────
     //   MAIN
@@ -101,18 +98,14 @@ public class TextFileManipulatorGUI extends Application {
     @Override
     public void start(Stage stage) {
         stage.setTitle("Text File Manipulator  —  Khansa Bint-e-Zia");
-
         root  = buildLayout(stage);
         scene = new Scene(root, 1100, 700);
-
         applyTheme();
-
         stage.setScene(scene);
         stage.setMinWidth(860);
         stage.setMinHeight(580);
         stage.show();
-
-        setStatus("Welcome!  Open a .txt file or start typing to get started.", C_BLUE);
+        setStatus("\uD83D\uDCC2  Click  'Open File'  on the LEFT sidebar to get started.", C_BLUE);
     }
 
     // =========================================================
@@ -127,7 +120,7 @@ public class TextFileManipulatorGUI extends Application {
         return bp;
     }
 
-    // ── Top Bar ───────────────────────────────
+    // ── Top Bar ── (FIX 1: Open File removed from here)
     private HBox buildTopBar(Stage stage) {
         HBox bar = new HBox(12);
         bar.setPadding(new Insets(13, 20, 13, 20));
@@ -137,33 +130,83 @@ public class TextFileManipulatorGUI extends Application {
         title.setFont(Font.font("Monospace", FontWeight.BOLD, 18));
         title.setTextFill(Color.web(C_BLUE));
 
+        Label author = new Label("— Khansa Bint-e-Zia");
+        author.setFont(Font.font("Monospace", 12));
+        author.setTextFill(Color.web(D_SUBTEXT));
+
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        fileNameLabel = new Label("No file opened");
-        fileNameLabel.setFont(Font.font("Monospace", 12));
-        fileNameLabel.setTextFill(Color.web(C_YELLOW));
-
-        Button openBtn = topButton("Open File", C_BLUE);
-        openBtn.setOnAction(e -> openFile(stage));
-
-        Button themeBtn = topButton("Dark / Light", C_PURPLE);
+        Button themeBtn = topButton("\uD83C\uDF19 Dark / \u2600 Light", C_PURPLE);
         themeBtn.setOnAction(e -> { isDark = !isDark; applyTheme(); });
 
-        bar.getChildren().addAll(title, spacer, fileNameLabel, openBtn, themeBtn);
+        bar.getChildren().addAll(title, author, spacer, themeBtn);
         return bar;
     }
 
-    // ── Sidebar ───────────────────────────────
+    // ── Sidebar ──
+    // FIX 1: Open File at TOP — big solid blue button, impossible to miss
+    // FIX 3: Change File button appears after a file is loaded
     private VBox buildSidebar(Stage stage) {
         sidebar = new VBox(8);
-        sidebar.setPadding(new Insets(18, 12, 18, 12));
-        sidebar.setPrefWidth(228);
+        sidebar.setPadding(new Insets(14, 12, 18, 12));
+        sidebar.setPrefWidth(235);
 
-        Label lbl = new Label("  OPERATIONS");
-        lbl.setFont(Font.font("Monospace", FontWeight.BOLD, 10));
-        lbl.setTextFill(Color.web(D_SUBTEXT));
-        lbl.setPadding(new Insets(0, 0, 4, 0));
+        // ── FILE SECTION ──
+        Label fileSection = new Label("  FILE");
+        fileSection.setFont(Font.font("Monospace", FontWeight.BOLD, 10));
+        fileSection.setTextFill(Color.web(D_SUBTEXT));
+
+        // BIG Open File button — solid blue, always visible at top
+        Button openBtn = new Button("\uD83D\uDCC2  Open File");
+        openBtn.setMaxWidth(Double.MAX_VALUE);
+        openBtn.setFont(Font.font("Monospace", FontWeight.BOLD, 14));
+        openBtn.setPadding(new Insets(12, 12, 12, 12));
+        openBtn.setStyle(
+            "-fx-background-color:" + C_BLUE + ";" +
+            "-fx-text-fill:#0d1117;" +
+            "-fx-border-radius:6; -fx-background-radius:6; -fx-cursor:hand;"
+        );
+        openBtn.setOnMouseEntered(e -> openBtn.setStyle(
+            "-fx-background-color:#7dd8f5;" +
+            "-fx-text-fill:#0d1117;" +
+            "-fx-border-radius:6; -fx-background-radius:6; -fx-cursor:hand;"
+        ));
+        openBtn.setOnMouseExited(e -> openBtn.setStyle(
+            "-fx-background-color:" + C_BLUE + ";" +
+            "-fx-text-fill:#0d1117;" +
+            "-fx-border-radius:6; -fx-background-radius:6; -fx-cursor:hand;"
+        ));
+        openBtn.setOnAction(e -> openFile(stage));
+
+        // FIX 3: Change File button — hidden until first file is opened
+        changeFileBtn = new Button("\uD83D\uDD04  Change File");
+        changeFileBtn.setMaxWidth(Double.MAX_VALUE);
+        changeFileBtn.setFont(Font.font("Monospace", FontWeight.BOLD, 12));
+        changeFileBtn.setPadding(new Insets(9, 12, 9, 12));
+        applySideBtnStyle(changeFileBtn, C_ORANGE, false);
+        changeFileBtn.setOnMouseEntered(e -> applySideBtnStyle(changeFileBtn, C_ORANGE, true));
+        changeFileBtn.setOnMouseExited(e  -> applySideBtnStyle(changeFileBtn, C_ORANGE, false));
+        changeFileBtn.setOnAction(e -> openFile(stage));
+        changeFileBtn.setVisible(false);
+        changeFileBtn.setManaged(false);
+
+        // Current file name display
+        fileNameLabel = new Label("No file opened");
+        fileNameLabel.setFont(Font.font("Monospace", 11));
+        fileNameLabel.setTextFill(Color.web(C_YELLOW));
+        fileNameLabel.setPadding(new Insets(2, 4, 4, 4));
+        fileNameLabel.setWrapText(true);
+        fileNameLabel.setMaxWidth(215);
+
+        Separator sep1 = new Separator();
+        sep1.setPadding(new Insets(4, 0, 4, 0));
+
+        // ── OPERATIONS SECTION ──
+        Label opsSection = new Label("  OPERATIONS");
+        opsSection.setFont(Font.font("Monospace", FontWeight.BOLD, 10));
+        opsSection.setTextFill(Color.web(D_SUBTEXT));
+        opsSection.setPadding(new Insets(2, 0, 2, 0));
 
         Button b1 = sideBtn("1.  Eliminate Duplicates",  C_PINK,   e -> opEliminateDuplicates());
         Button b2 = sideBtn("2.  Reverse Content",        C_BLUE,   e -> opReverse());
@@ -177,6 +220,9 @@ public class TextFileManipulatorGUI extends Application {
         Region spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
 
+        Separator sep2 = new Separator();
+        sep2.setPadding(new Insets(4, 0, 4, 0));
+
         Button saveBtn = new Button("\uD83D\uDCBE  Save File");
         saveBtn.setMaxWidth(Double.MAX_VALUE);
         saveBtn.setFont(Font.font("Monospace", FontWeight.BOLD, 13));
@@ -186,7 +232,12 @@ public class TextFileManipulatorGUI extends Application {
         saveBtn.setOnMouseExited(e  -> applySideBtnStyle(saveBtn, C_GREEN, false));
         saveBtn.setOnAction(e -> saveFile());
 
-        sidebar.getChildren().addAll(lbl, b1, b2, b3, b4, b5, b6, b7, b8, spacer, saveBtn);
+        sidebar.getChildren().addAll(
+            fileSection, openBtn, changeFileBtn, fileNameLabel,
+            sep1, opsSection,
+            b1, b2, b3, b4, b5, b6, b7, b8,
+            spacer, sep2, saveBtn
+        );
         return sidebar;
     }
 
@@ -203,7 +254,10 @@ public class TextFileManipulatorGUI extends Application {
         fileArea.setFont(Font.font("Monospace", 14));
         fileArea.setWrapText(false);
         fileArea.setEditable(true);
-        fileArea.setPromptText("Open a .txt file to display its content here...");
+        fileArea.setPromptText(
+            "  Click '\uD83D\uDCC2 Open File' on the LEFT sidebar to open a .txt file\n\n" +
+            "  Or start typing here and use the operations on the left!"
+        );
         VBox.setVgrow(fileArea, Priority.ALWAYS);
 
         centre.getChildren().addAll(lbl, fileArea);
@@ -216,9 +270,9 @@ public class TextFileManipulatorGUI extends Application {
         bar.setPadding(new Insets(8, 16, 8, 16));
         bar.setAlignment(Pos.CENTER_LEFT);
 
-        statusLabel = new Label("Ready");
+        statusLabel = new Label("Ready  —  Open a file from the LEFT sidebar to begin");
         statusLabel.setFont(Font.font("Monospace", 12));
-        statusLabel.setTextFill(Color.web(C_GREEN));
+        statusLabel.setTextFill(Color.web(C_BLUE));
 
         bar.getChildren().add(statusLabel);
         return bar;
@@ -228,14 +282,13 @@ public class TextFileManipulatorGUI extends Application {
     //   THEME
     // =========================================================
     private void applyTheme() {
-        String bg      = isDark ? D_BG      : L_BG;
-        String sb      = isDark ? D_SIDEBAR  : L_SIDEBAR;
-        String card    = isDark ? D_CARD     : L_CARD;
-        String text    = isDark ? D_TEXT     : L_TEXT;
-        String area    = isDark ? D_AREA     : L_AREA;
+        String bg   = isDark ? D_BG      : L_BG;
+        String sb   = isDark ? D_SIDEBAR : L_SIDEBAR;
+        String card = isDark ? D_CARD    : L_CARD;
+        String text = isDark ? D_TEXT    : L_TEXT;
+        String area = isDark ? D_AREA    : L_AREA;
 
         root.setStyle("-fx-background-color:" + bg + ";");
-
         root.getTop().setStyle(
             "-fx-background-color:" + sb + ";" +
             "-fx-border-color:" + card + "; -fx-border-width:0 0 1 0;"
@@ -339,13 +392,21 @@ public class TextFileManipulatorGUI extends Application {
         );
         File f = fc.showOpenDialog(stage);
         if (f == null) return;
+
         currentFilePath = f.getAbsolutePath();
         fileSize        = (int) Math.max(f.length(), 512);
         clipBoard       = new DSStack(fileSize);
         contentList     = new DSLinkedList();
-        fileNameLabel.setText("  " + f.getName());
+
+        // Update sidebar file name
+        fileNameLabel.setText("\uD83D\uDCC4 " + f.getName());
+
+        // FIX 3: Show Change File button now that a file is open
+        changeFileBtn.setVisible(true);
+        changeFileBtn.setManaged(true);
+
         refreshTextArea();
-        setStatus("File opened:  " + f.getName(), C_GREEN);
+        setStatus("\uD83D\uDCC2  Opened:  " + f.getAbsolutePath(), C_GREEN);
     }
 
     private void refreshTextArea() {
@@ -365,7 +426,6 @@ public class TextFileManipulatorGUI extends Application {
     private List<String> readLines() throws IOException {
         List<String> list = new ArrayList<>();
         if (currentFilePath == null) {
-            // read from TextArea directly if no file
             for (String l : fileArea.getText().split("\n")) list.add(l);
             return list;
         }
@@ -377,12 +437,9 @@ public class TextFileManipulatorGUI extends Application {
     }
 
     private void writeLines(List<String> lines) throws IOException {
-        // Update TextArea always
         StringBuilder sb = new StringBuilder();
         for (String l : lines) sb.append(l).append("\n");
         fileArea.setText(sb.toString());
-
-        // Also write to file if one is open
         if (currentFilePath != null) {
             BufferedWriter bw = new BufferedWriter(new FileWriter(currentFilePath));
             for (String l : lines) { bw.write(l); bw.newLine(); }
@@ -390,18 +447,19 @@ public class TextFileManipulatorGUI extends Application {
         }
     }
 
+    // FIX 2: Save shows FULL PATH where file is saved
     private void saveFile() {
         if (currentFilePath == null) {
-            setStatus("No file open — changes shown in editor only.", C_YELLOW);
+            setStatus("\u26A0\uFE0F  No file open! Open a file first using 'Open File' button.", C_YELLOW);
             return;
         }
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(currentFilePath));
             bw.write(fileArea.getText());
             bw.close();
-            setStatus("File saved successfully!", C_GREEN);
+            setStatus("\uD83D\uDCBE  Saved successfully!   Location \u2794  " + currentFilePath, C_GREEN);
         } catch (IOException e) {
-            setStatus("Error saving: " + e.getMessage(), C_RED);
+            setStatus("\u274C  Error saving: " + e.getMessage(), C_RED);
         }
     }
 
@@ -421,17 +479,9 @@ public class TextFileManipulatorGUI extends Application {
         return d.showAndWait();
     }
 
-    private void showAlert(String title, String msg, String color) {
-        Alert a = new Alert(Alert.AlertType.INFORMATION);
-        a.setTitle(title);
-        a.setHeaderText(null);
-        a.setContentText(msg);
-        a.showAndWait();
-    }
-
     private boolean hasContent() {
         if (fileArea.getText().trim().isEmpty()) {
-            setStatus("No content — open a file or type in the editor first.", C_RED);
+            setStatus("\u274C  No content!  Click '\uD83D\uDCC2 Open File' on the left sidebar first.", C_RED);
             return false;
         }
         return true;
@@ -439,7 +489,6 @@ public class TextFileManipulatorGUI extends Application {
 
     // =========================================================
     //   OPERATION 1 — Eliminate Duplicates
-    //   DS: LinkedList (contains for duplicate check)
     // =========================================================
     private void opEliminateDuplicates() {
         if (!hasContent()) return;
@@ -454,15 +503,14 @@ public class TextFileManipulatorGUI extends Application {
             while ((s = seen.deletefirstString()) != null) result.add(s);
             int removed = lines.size() - result.size();
             writeLines(result);
-            setStatus("Removed " + removed + " duplicate line(s) successfully!", C_GREEN);
+            setStatus("\u2705  Removed " + removed + " duplicate line(s) successfully!", C_GREEN);
         } catch (IOException e) {
-            setStatus("Error: " + e.getMessage(), C_RED);
+            setStatus("\u274C  Error: " + e.getMessage(), C_RED);
         }
     }
 
     // =========================================================
     //   OPERATION 2 — Reverse Content
-    //   DS: Stack (LIFO reversal)
     // =========================================================
     private void opReverse() {
         if (!hasContent()) return;
@@ -473,15 +521,14 @@ public class TextFileManipulatorGUI extends Application {
             List<String> result = new ArrayList<>();
             while (!stack.isEmpty()) result.add(stack.pop());
             writeLines(result);
-            setStatus("File content reversed successfully!", C_BLUE);
+            setStatus("\u2705  File content reversed successfully!", C_BLUE);
         } catch (IOException e) {
-            setStatus("Error: " + e.getMessage(), C_RED);
+            setStatus("\u274C  Error: " + e.getMessage(), C_RED);
         }
     }
 
     // =========================================================
     //   OPERATION 3 — Insert New Line
-    //   DS: Stack
     // =========================================================
     private void opInsertLine() {
         if (!hasContent()) return;
@@ -506,15 +553,14 @@ public class TextFileManipulatorGUI extends Application {
             List<String> result = new ArrayList<>();
             while (!modified.isEmpty()) result.add(modified.pop());
             writeLines(result);
-            setStatus("New line inserted after keyword \"" + kw.get() + "\"!", C_GREEN);
+            setStatus("\u2705  New line inserted after keyword \"" + kw.get() + "\"!", C_GREEN);
         } catch (IOException e) {
-            setStatus("Error: " + e.getMessage(), C_RED);
+            setStatus("\u274C  Error: " + e.getMessage(), C_RED);
         }
     }
 
     // =========================================================
     //   OPERATION 4 — Copy Line
-    //   DS: Stack (Clipboard)
     // =========================================================
     private void opCopy() {
         if (!hasContent()) return;
@@ -525,26 +571,25 @@ public class TextFileManipulatorGUI extends Application {
             int no = Integer.parseInt(input.get().trim());
             List<String> lines = readLines();
             if (no < 1 || no > lines.size()) {
-                setStatus("Invalid line number!", C_RED); return;
+                setStatus("\u274C  Invalid! Enter a number between 1 and " + lines.size(), C_RED); return;
             }
             clipBoard.clearStack();
             clipBoard.push(lines.get(no - 1));
-            setStatus("Line " + no + " copied to clipboard:  \"" + lines.get(no - 1) + "\"", C_ORANGE);
+            setStatus("\uD83D\uDCCB  Line " + no + " copied:  \"" + lines.get(no - 1) + "\"", C_ORANGE);
         } catch (NumberFormatException e) {
-            setStatus("Please enter a valid number!", C_RED);
+            setStatus("\u274C  Please enter a valid number!", C_RED);
         } catch (IOException e) {
-            setStatus("Error: " + e.getMessage(), C_RED);
+            setStatus("\u274C  Error: " + e.getMessage(), C_RED);
         }
     }
 
     // =========================================================
     //   OPERATION 5 — Paste Line
-    //   DS: Stack (Clipboard) + LinkedList
     // =========================================================
     private void opPaste() {
         if (!hasContent()) return;
         if (clipBoard.peek() == null) {
-            setStatus("Clipboard is empty!  Copy or Cut a line first.", C_RED); return;
+            setStatus("\u274C  Clipboard is empty!  Copy or Cut a line first.", C_RED); return;
         }
         Optional<String> input = askInput("Paste Line",
             "Paste BEFORE which line number?", "e.g. 2");
@@ -553,21 +598,20 @@ public class TextFileManipulatorGUI extends Application {
             int no = Integer.parseInt(input.get().trim());
             List<String> lines = readLines();
             if (no < 1 || no > lines.size() + 1) {
-                setStatus("Invalid line number!", C_RED); return;
+                setStatus("\u274C  Invalid! Enter a number between 1 and " + (lines.size()+1), C_RED); return;
             }
             lines.add(no - 1, clipBoard.peek());
             writeLines(lines);
-            setStatus("Pasted at line " + no + ":  \"" + clipBoard.peek() + "\"", C_YELLOW);
+            setStatus("\uD83D\uDCCC  Pasted at line " + no + ":  \"" + clipBoard.peek() + "\"", C_YELLOW);
         } catch (NumberFormatException e) {
-            setStatus("Please enter a valid number!", C_RED);
+            setStatus("\u274C  Please enter a valid number!", C_RED);
         } catch (IOException e) {
-            setStatus("Error: " + e.getMessage(), C_RED);
+            setStatus("\u274C  Error: " + e.getMessage(), C_RED);
         }
     }
 
     // =========================================================
     //   OPERATION 6 — Cut Line
-    //   DS: Stack (Clipboard) + LinkedList
     // =========================================================
     private void opCut() {
         if (!hasContent()) return;
@@ -578,30 +622,28 @@ public class TextFileManipulatorGUI extends Application {
             int no = Integer.parseInt(input.get().trim());
             List<String> lines = readLines();
             if (no < 1 || no > lines.size()) {
-                setStatus("Invalid line number!", C_RED); return;
+                setStatus("\u274C  Invalid! Enter a number between 1 and " + lines.size(), C_RED); return;
             }
             String cut = lines.remove(no - 1);
             clipBoard.clearStack();
             clipBoard.push(cut);
             writeLines(lines);
-            setStatus("Line " + no + " cut to clipboard:  \"" + cut + "\"", C_RED);
+            setStatus("\u2702\uFE0F  Line " + no + " cut to clipboard:  \"" + cut + "\"", C_RED);
         } catch (NumberFormatException e) {
-            setStatus("Please enter a valid number!", C_RED);
+            setStatus("\u274C  Please enter a valid number!", C_RED);
         } catch (IOException e) {
-            setStatus("Error: " + e.getMessage(), C_RED);
+            setStatus("\u274C  Error: " + e.getMessage(), C_RED);
         }
     }
 
     // =========================================================
     //   OPERATION 7 — Sort Content
-    //   DS: Array + Bubble Sort (String compareTo)
     // =========================================================
     private void opSort() {
         if (!hasContent()) return;
         try {
             List<String> lines = readLines();
             String[] arr = lines.toArray(new String[0]);
-            // Bubble Sort — same as console version
             for (int i = 0; i < arr.length; i++) {
                 for (int j = i + 1; j < arr.length; j++) {
                     if (arr[i].compareTo(arr[j]) > 0) {
@@ -610,20 +652,19 @@ public class TextFileManipulatorGUI extends Application {
                 }
             }
             writeLines(Arrays.asList(arr));
-            setStatus("Content sorted alphabetically using Bubble Sort!", C_PURPLE);
+            setStatus("\u2705  Content sorted alphabetically using Bubble Sort!", C_PURPLE);
         } catch (IOException e) {
-            setStatus("Error: " + e.getMessage(), C_RED);
+            setStatus("\u274C  Error: " + e.getMessage(), C_RED);
         }
     }
 
     // =========================================================
     //   OPERATION 8 — Merge File
-    //   DS: LinkedList
     // =========================================================
     private void opMerge(Stage stage) {
         if (!hasContent()) return;
         FileChooser fc = new FileChooser();
-        fc.setTitle("Select File to Merge");
+        fc.setTitle("Select File to Merge Into Current File");
         fc.getExtensionFilters().add(
             new FileChooser.ExtensionFilter("Text Files (*.txt)", "*.txt")
         );
@@ -643,9 +684,9 @@ public class TextFileManipulatorGUI extends Application {
             String s;
             while ((s = list.deletefirstString()) != null) result.add(s);
             writeLines(result);
-            setStatus("Merged \"" + second.getName() + "\" into current file!", C_TEAL);
+            setStatus("\u2705  Merged \"" + second.getName() + "\" into current file!", C_TEAL);
         } catch (IOException e) {
-            setStatus("Error: " + e.getMessage(), C_RED);
+            setStatus("\u274C  Error: " + e.getMessage(), C_RED);
         }
     }
 }
@@ -653,7 +694,6 @@ public class TextFileManipulatorGUI extends Application {
 
 // =============================================================
 //   CUSTOM DATA STRUCTURE — Stack (Array-Based)
-//   LIFO — Last In First Out
 // =============================================================
 class DSStack {
     private String[] arr;
@@ -666,7 +706,6 @@ class DSStack {
 
     void push(String x) {
         if (top >= arr.length - 1) {
-            // auto-grow
             arr = java.util.Arrays.copyOf(arr, arr.length * 2);
         }
         arr[++top] = x;
@@ -683,9 +722,7 @@ class DSStack {
 
     boolean isEmpty() { return top == -1; }
 
-    int size() {
-        return top + 1;
-    }
+    int size() { return top + 1; }
 
     void clearStack() {
         while (top != -1) pop();
@@ -700,7 +737,6 @@ class DSStack {
 
 // =============================================================
 //   CUSTOM DATA STRUCTURE — Singly LinkedList
-//   Dynamic linear data structure using Node links
 // =============================================================
 class DSLinkedList {
 
